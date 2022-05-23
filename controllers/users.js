@@ -1,17 +1,17 @@
 const {User} = require("../mongo")
 const bcrypt = require("bcrypt")
+const jwt = require("jsonwebtoken")
 
 async function createUser(req, res) {
-  const {email, password} = req.body
-
-  const hashedPassword = await hashPassword(password)
-
-  const user = new User({email, password: hashedPassword})
-
-  user
-    .save()
-    .then(() => res.status(201).send({message: "Signup successful !"}))
-    .catch((err) => res.status(409).send({message: "User not saved :" + err}))
+  try {
+    const {email, password} = req.body
+    const hashedPassword = await hashPassword(password)
+    const user = new User({email, password: hashedPassword})
+    await user.save()
+    res.status(201).send({message: "Signup successful !"})
+  } catch(err) {
+    res.status(409).send({message: "User not saved :" + err})
+    }
 }
 
 function hashPassword(password) {
@@ -20,15 +20,25 @@ function hashPassword(password) {
 }
 
 async function logUser(req, res) {
-  const email = req.body.email
-  const password = req.body.password
-  const user = await User.findOne({email: email, password: password})
+  try {
+    const email = req.body.email
+    const password = req.body.password
+    const user = await User.findOne({email: email})
 
-  const isPasswordOk = await bcrypt.compare(password, user.password)
-  if (!isPasswordOk) {
-    res.status(403).send ({message: "Incorrect Password"})
-  }
-    res.status(200).send({message: "Connected"})
+    const isPasswordOk = await bcrypt.compare(password, user.password)
+    if (!isPasswordOk) {
+      res.status(403).send ({message: "Incorrect Password"})
+    }
+    const token = createToken(email)
+    res.status(200).send({userId: user?._id, token: token})
+  } catch(err) {
+    res.status(500).send({message: "Internal Error"})
+    }
+}
+
+function createToken(email) {
+  const jwtPassword = process.env.JWT_PASSWORD
+  return jwt.sign({email: email}, jwtPassword,{expiresIn: "24h"})
 }
 
 module.exports = {createUser, logUser}
