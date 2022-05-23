@@ -23,6 +23,8 @@ function getSauces(req, res) {
 }
 
 function createSauces(req, res) {
+  const name = req.body.name
+
 
   const product = new Product({
     userId: "pouet",
