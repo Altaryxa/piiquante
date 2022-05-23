@@ -28,9 +28,7 @@ async function logUser(req, res) {
   if (!isPasswordOk) {
     res.status(403).send ({message: "Incorrect Password"})
   }
-  if (isPasswordOk) {
     res.status(200).send({message: "Connected"})
-  }
 }
 
 module.exports = {createUser, logUser}
