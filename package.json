@@ -1,7 +1,7 @@
 {
   "name": "piiquante-back",
   "version": "1.0.0",
-  "description": "backend projet P6",
+  "description": "backend project P6",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -12,6 +12,7 @@
     "bcrypt": "^5.0.1",
     "cors": "^2.8.5",
     "dotenv": "^16.0.1",
+    "eslint": "^8.16.0",
     "express": "^4.18.1",
     "mongoose": "^6.3.4",
     "mongoose-unique-validator": "^3.0.0"
